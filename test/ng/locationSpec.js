@@ -512,141 +512,68 @@ describe('$location', function() {
   // html5 history is disabled
   describe('html5Mode disabled', function() {
 
-    describe('initial url', function () {
+    describe('initial urls:', function () {
 
-      var initUrl,
+      var subject,
           $browser,
           $location;
 
-      function initialize(url) {
-        var html5Mode  = false,
-            hashPrefix = '!',
-            baseHref   = ''
+      function initialize(spec, html5Mode, hashPrefix, baseHref) {
+
+        subject = spec.description
 
         initService(html5Mode, hashPrefix, baseHref);
+
         inject(
-          initBrowser(url, ''),
+          initBrowser(subject, ''),
           function(_$location_, _$browser_) {
             $browser = _$browser_;
             $location = _$location_;
           }
         );
+
       }
 
-      // initial url
-      describe('does not end in /', function () {
+      describe ('without base[href]', function () {
 
-        describe('with path in hashbang', function () {
+        beforeEach(function () {
+          initialize(this, false, '!', '');
+        })
 
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/index.html#!/a/b?foo=bar';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('gets path and url from the hashbang', function () {
-            expect($location.path()).toBe('/a/b');
-            expect($location.url()).toBe('/a/b?foo=bar');
-          });
-
+        it('http://domain.com/base/index.html#!/a/b?foo=bar', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe('/a/b');
+          expect($location.url()).toBe('/a/b?foo=bar');
         });
 
-        describe('with no path in hashbang', function () {
-
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/index.html#!?foo=bar';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('path and url default to /', function () {
-            expect($location.path()).toBe('/');
-            expect($location.url()).toBe('/?foo=bar');
-          });
-
+        it('http://domain.com/base/index.html#!?foo=bar', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe('');        // should this be '/'
+          expect($location.url()).toBe('?foo=bar'); // should this be '/?foo=bar'
         });
 
-        describe('with no hashbang', function () {
-
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/index.html';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('path and url default to /', function () {
-            expect($location.path()).toBe('/');
-            expect($location.url()).toBe('/?foo=bar');
-          });
-
+        it('http://domain.com/base/index.html', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe('');  // should this be '/'
+          expect($location.url()).toBe('');   // should this be '/' 
         });
 
-      });
-
-      // initial url
-      describe('ends with /', function () {
-
-        describe('with path in hashbang', function () {
-
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/#!/a/b?foo=bar';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('gets path and url from the hashbang', function () {
-            expect($location.path()).toBe('/a/b');
-            expect($location.url()).toBe('/a/b?foo=bar');
-          });
-
+        it('http://domain.com/base/#!/a/b?foo=bar', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe('/a/b');
+          expect($location.url()).toBe('/a/b?foo=bar');
         });
 
-        describe('with no path in hashbang', function () {
-
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/#!?foo=bar';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('path and url default to /', function () {
-            expect($location.path()).toBe('/');
-            expect($location.url()).toBe('/?foo=bar');
-          });
-
+        it('http://domain.com/base/#!?foo=bar', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe('');        // should this be '/'
+          expect($location.url()).toBe('?foo=bar'); // should this '/?foo=bar'
         });
 
-        describe('with no hashbang', function () {
-
-          beforeEach(function () {
-            initUrl = 'http://domain.com/base/';
-            initialize(initUrl);
-          })
-
-          it('does not change browser url', function () {
-            expect($browser.url()).toBe(initUrl);
-          });
-
-          it('path and url default to /', function () {
-            expect($location.path()).toBe('/');
-            expect($location.url()).toBe('/?foo=bar');
-          });
-
+        it('http://domain.com/base/?foo=bar', function () {
+          expect($browser.url()).toBe(subject);
+          expect($location.path()).toBe(''); // should this be '/'
+          expect($location.url()).toBe('');  // should this be '/?foo=bar'
         });
 
       });
